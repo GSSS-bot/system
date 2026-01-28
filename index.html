@@ -4,34 +4,23 @@
 <meta charset="UTF-8">
 <title>社内システム一覧</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
+  html {
+    overflow-y: scroll;
+  }
+  
   body {
     font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
     background: #eef1f5;
     margin: 0;
     padding: 30px 16px;
     color: #333;
-
-    /* スマホの強制文字拡大を抑制 */
     -webkit-text-size-adjust: 100%;
   }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  h1 {
-    font-size: 24px;
-    margin-bottom: 6px;
-  }
-
-  .desc {
-    color: #666;
-    margin-bottom: 20px;
-    font-size: 14px;
-  }
-
+  .container { max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  .desc { color: #666; margin-bottom: 20px; font-size: 14px; }
   .note {
     background: #f8f9fb;
     border-left: 4px solid #1e6bd6;
@@ -40,12 +29,16 @@
     font-size: 13px;
     line-height: 1.5;
   }
-
-  /* フィルタ */
-  .filters {
-    margin-bottom: 16px;
+  .search-box { margin-bottom: 12px; }
+  .search-box input {
+    width: 100%;
+    max-width: 420px;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccd3dd;
+    border-radius: 4px;
   }
-
+  .filters { margin-bottom: 16px; }
   .filter-btn {
     background: #fff;
     border: 1px solid #ccd3dd;
@@ -56,39 +49,23 @@
     font-size: 13px;
     cursor: pointer;
   }
-
   .filter-btn.active {
     background: #1e6bd6;
     color: #fff;
     border-color: #1e6bd6;
   }
-
   table {
     width: 100%;
     border-collapse: collapse;
     background: #fff;
     border: 1px solid #d9dfe8;
   }
-
-    /* 列幅指定 */
-  th:nth-child(1), td:nth-child(1) { width: 10%; }
-  th:nth-child(2), td:nth-child(2) { width: 30%; }
-  th:nth-child(3), td:nth-child(3) { width: 30%; }
-  th:nth-child(4), td:nth-child(4) { width: 30%; }
-
-  /* 文字のはみ出し対策 */
-  td {
-    padding: 12px;
-    font-size: 14px;
-    border-bottom: 1px solid #eee;
-    word-break: break-word;
-  }
-
-  /* リンク列は横並びキープ */
-  td:nth-child(3) {
-    white-space: nowrap;
-  }
-
+  th:nth-child(1), td:nth-child(1) { width: 15%; }
+  th:nth-child(2), td:nth-child(2) { width: 15%; }
+  th:nth-child(3), td:nth-child(3) { width: 31%; }
+  th:nth-child(4), td:nth-child(4) { width: 13%; }
+  th:nth-child(5), td:nth-child(5) { width: 13%; }
+  th:nth-child(6), td:nth-child(6) { width: 13%; }
   th {
     background: #f2f4f8;
     font-size: 13px;
@@ -97,11 +74,13 @@
     text-align: left;
     border-bottom: 1px solid #d9dfe8;
   }
-
-  tr:last-child td {
-    border-bottom: none;
+  td {
+    padding: 12px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+    word-break: break-word;
   }
-
+  tr:last-child td { border-bottom: none; }
   .tag {
     display: inline-block;
     padding: 3px 10px;
@@ -110,7 +89,6 @@
     background: #e6eefc;
     color: #1e6bd6;
   }
-
   .btn {
     display: inline-block;
     padding: 5px 12px;
@@ -120,312 +98,588 @@
     color: #fff;
     background: #1e6bd6;
     margin-right: 6px;
+    margin-bottom: 4px;
+    white-space: nowrap;
   }
-
-  .btn.manual {
-    background: #6b7280;
+  .btn.sub { background: #6b7280; }
+  footer {
+    margin-top: 24px;
+    font-size: 12px;
+    color: #555;
+    text-align: right;
   }
-
   .disclaimer {
     background: #f8f9fb;
     border: 1px solid #d9dfe8;
     padding: 12px 16px;
     margin-bottom: 8px;
     line-height: 1.6;
-    font-size: 12px;
   }
-
-.footer {
-  margin-top: 24px;
-  font-size: 12px;
-  color: #555;
-  text-align: right;   
-}
-
-.updated {
-  color: #777;
-  padding-right: 1ch;  
-}
-
-  /* =========================
-   検索ボックス
-   ========================= */
-.search-box {
-  margin-bottom: 12px;
-}
-
-.search-box input {
-  width: 100%;
-  max-width: 420px;
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid #ccd3dd;
-  border-radius: 4px;
-}
-
-
+  .updated { color: #777; }
 </style>
 </head>
 
 <body>
 <div class="container">
 
-  <h1>社内システム一覧</h1>
-  <p class="desc">
-    社内で利用している各種システムのリンク・マニュアル・担当部署をまとめています。
-  </p>
+<h1>社内システム一覧</h1>
+<p class="desc">社内で利用している各種システムのリンク・資料・担当部署をまとめています。</p>
 
-  <div class="note">
-    ※ 本一覧はポータル的な位置づけです。<br>
-    システムの詳細な運用ルールについては、各担当部署の案内を優先してください。<br>
-    また、社内向けページのため、URLの第三者への共有はご遠慮ください。
-  </div>
+<div class="note">
+※ 本一覧はポータル的な位置づけです。<br>
+システムの詳細な運用ルールについては、各担当部署の案内を優先してください。<br>
+また、社内向けページのため、URLの第三者への共有はご遠慮ください。
+</div>
 
-<!-- 検索 -->
 <div class="search-box">
-  <input
-    type="text"
-    id="searchInput"
-    placeholder="システム名・用途・担当部署で検索"
-    onkeyup="applyFilter()"
-  >
+<input type="text" id="searchInput" placeholder="名称・用途・概要・担当で検索" onkeyup="applyFilter()">
 </div>
 
-  <!-- フィルタ -->
 <div class="filters">
-  <button class="filter-btn active" data-type="all" onclick="toggleFilter(this)">すべて</button>
-  <button class="filter-btn" data-type="勤怠" onclick="toggleFilter(this)">勤怠</button>
-  <button class="filter-btn" data-type="経理" onclick="toggleFilter(this)">経理</button>
-  <button class="filter-btn" data-type="安全" onclick="toggleFilter(this)">安全</button>
-  <button class="filter-btn" data-type="申請" onclick="toggleFilter(this)">申請</button>
-  <button class="filter-btn" data-type="情報共有" onclick="toggleFilter(this)">情報共有</button>
+<button class="filter-btn active" data-type="all" onclick="toggleFilter(this)">すべて</button>
+<button class="filter-btn" data-type="経理・請求" onclick="toggleFilter(this)">経理・請求</button>
+<button class="filter-btn" data-type="勤怠・人事" onclick="toggleFilter(this)">勤怠・人事</button>
+<button class="filter-btn" data-type="福利・健康" onclick="toggleFilter(this)">福利・健康</button>
+<button class="filter-btn" data-type="事務・文書" onclick="toggleFilter(this)">事務・文書</button>
+<button class="filter-btn" data-type="施工・現場" onclick="toggleFilter(this)">施工・現場</button>
+<button class="filter-btn" data-type="会議・支援" onclick="toggleFilter(this)">会議・支援</button>
+<button class="filter-btn" data-type="端末・連絡" onclick="toggleFilter(this)">端末・連絡</button>
 </div>
 
-  <table id="systemTable">
-    <thead>
-      <tr>
-        <th>用途</th>
-        <th>システム名</th>
-        <th>リンク・マニュアル等</th>
-        <th>担当部署</th>
-      </tr>
-    </thead>
-    <tbody>
+<table id="systemTable">
+<thead>
+<tr>
+<th>用途</th>
+<th>名称</th>
+<th>概要</th>
+<th>リンク</th>
+<th>資料</th>
+<th>担当</th>
+</tr>
+</thead>
 
-  <tr data-type="勤怠">
-    <td><span class="tag">勤怠</span></td>
-    <td>X'sion</td>
-    <td>
-      <!-- ログイン：X'sion 勤怠システム（ダミー） -->
-      <a
-        class="btn"
-        href="https://xsion-service.com/komatagumi/login"
-        target="_blank"
-      >
-        ログイン
-      </a>
+<tbody>
 
-      <!-- マニュアル：X'sion 操作マニュアル（ダミー） -->
-      <a
-        class="btn manual"
-        href="#"
-        target="_blank"
-      >
-        マニュアル
-      </a>
-    </td>
-    <td>総務部</td>
-  </tr>
+<tr data-type="勤怠・人事">
+<td><span class="tag">勤怠・人事</span></td>
+<td>X'sion</td>
+<td>勤怠管理</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-  <tr data-type="経理">
-    <td><span class="tag">経理</span></td>
-    <td>楽楽清算</td>
-    <td>
-      <!-- ログイン：楽楽清算（ダミー） -->
-      <a
-        class="btn"
-        href="#"
-        target="_blank"
-      >
-        ログイン
-      </a>
+<tr data-type="経理・請求">
+<td><span class="tag">経理・請求</span></td>
+<td>楽楽清算</td>
+<td>経費精算・立替金申請</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-      <!-- マニュアル：楽楽清算 操作手順（ダミー） -->
-      <a
-        class="btn manual"
-        href="#"
-        target="_blank"
-      >
-        マニュアル
-      </a>
-    </td>
-    <td>経理課</td>
-  </tr>
+<tr data-type="経理・請求">
+<td><span class="tag">経理・請求</span></td>
+<td>Digital Builder 請求書</td>
+<td>協力会社請求書</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-  <tr data-type="経理">
-    <td><span class="tag">経理</span></td>
-    <td>Digital Builder 請求書</td>
-    <td>
-      <!-- ログイン：Digital Builder 請求書（ダミー） -->
-      <a
-        class="btn"
-        href="https://digitalbillder.com/signin"
-        target="_blank"
-      >
-        ログイン
-      </a>
+<tr data-type="経理・請求">
+<td><span class="tag">経理・請求</span></td>
+<td>web明細</td>
+<td>給与・支払明細</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-      <!-- マニュアル：提出者向け（ダミー） -->
-      <a
-        class="btn manual"
-        href="https://www.dropbox.com/scl/fi/erc9hhdcs5yxdc0v4bcda/DigitalBuilder-_.pdf?rlkey=s51ijq1vkzzoqxd9qkqdk4ksb&dl=0"
-        target="_blank"
-      >
-        提出者向け
-      </a>
+<tr data-type="経理・請求">
+<td><span class="tag">経理・請求</span></td>
+<td>CI-NET</td>
+<td>協力会社の電子契約</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-      <!-- マニュアル：承認者向け（ダミー） -->
-      <a
-        class="btn manual"
-        href="https://www.dropbox.com/scl/fi/dx8wpmnplhtx5dp2w2vtc/DigitalBuilder-_.pdf?rlkey=q61fdchj16kz02xd3ab37vymz&dl=0"
-        target="_blank"
-      >
-        承認者向け
-      </a>
-    </td>
-    <td>経理課</td>
-  </tr>
+<tr data-type="経理・請求">
+<td><span class="tag">経理・請求</span></td>
+<td>建設業退職金共済</td>
+<td>協力会社の建退共加入管理</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-  <tr data-type="安全">
-    <td><span class="tag">安全</span></td>
-    <td>グリーンサイト</td>
-    <td>
-      <!-- ログイン：グリーンサイト（ダミー） -->
-      <a
-        class="btn"
-        href="#"
-        target="_blank"
-      >
-        ログイン
-      </a>
+<tr data-type="福利・健康">
+<td><span class="tag">福利・健康</span></td>
+<td>セコム安否確認</td>
+<td>災害時の安否確認</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-      <!-- マニュアル：グリーンサイト 操作マニュアル（ダミー） -->
-      <a
-        class="btn manual"
-        href="#"
-        target="_blank"
-      >
-        マニュアル
-      </a>
-    </td>
-    <td>建築事務</td>
-  </tr>
+<tr data-type="福利・健康">
+<td><span class="tag">福利・健康</span></td>
+<td>ストレスチェック</td>
+<td>ストレスチェック受検</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-  <tr data-type="安全">
-    <td><span class="tag">安全</span></td>
-    <td>CCUS</td>
-    <td>
-      <!-- ログイン：CCUS（ダミー） -->
-      <a
-        class="btn"
-        href="#"
-        target="_blank"
-      >
-        ログイン
-      </a>
+<tr data-type="福利・健康">
+<td><span class="tag">福利・健康</span></td>
+<td>kencom</td>
+<td>健康活動の記録・ポイント管理</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-      <!-- マニュアル：CCUS 操作手順（ダミー） -->
-      <a
-        class="btn manual"
-        href="#"
-        target="_blank"
-      >
-        マニュアル
-      </a>
-    </td>
-    <td>建築事務</td>
-  </tr>
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>グリーンサイト</td>
+<td>安全書類・施工体制台帳</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-  <tr data-type="申請">
-    <td><span class="tag">申請</span></td>
-    <td>ワークフロー</td>
-    <td>
-      <!-- ログイン：社内ワークフロー（ダミー） -->
-      <a
-        class="btn"
-        href="#"
-        target="_blank"
-      >
-        ログイン
-      </a>
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>建設SIGNESS</td>
+<td>サイネージ表示コンテンツ</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-      <!-- マニュアル：ワークフロー 操作手順（ダミー） -->
-      <a
-        class="btn manual"
-        href="#"
-        target="_blank"
-      >
-        マニュアル
-      </a>
-    </td>
-    <td>総務部</td>
-  </tr>
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>CCUS</td>
+<td>技能者情報・就業履歴</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-  <tr data-type="情報共有">
-    <td><span class="tag">情報共有</span></td>
-    <td>NIコラボ</td>
-    <td>
-      <!-- ログイン：NIコラボ（ダミー） -->
-      <a
-        class="btn"
-        href="#"
-        target="_blank"
-      >
-        ログイン
-      </a>
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>Safie</td>
+<td>現場設置カメラ、ポケットカメラ</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-      <!-- マニュアル：NIコラボ 操作手順（ダミー） -->
-      <a
-        class="btn manual"
-        href="#"
-        target="_blank"
-      >
-        マニュアル
-      </a>
-    </td>
-    <td>総務部</td>
-  </tr>
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>アンドパット</td>
+<td>現場の工程・情報共有</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
-  <tr data-type="情報共有">
-    <td><span class="tag">情報共有</span></td>
-    <td>Dropbox</td>
-    <td>
-      <!-- ログイン：Dropbox 社内共有（ダミー） -->
-      <a
-        class="btn"
-        href="#"
-        target="_blank"
-      >
-        ログイン
-      </a>
-    </td>
-    <td>総務部</td>
-  </tr>
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>スパイダープラス</td>
+<td>工事写真</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>蔵衛門</td>
+<td>工事写真</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="施工・現場">
+<td><span class="tag">施工・現場</span></td>
+<td>ラクシー</td>
+<td>配筋検査記録・管理</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="事務・文書">
+<td><span class="tag">事務・文書</span></td>
+<td>NIコラボ</td>
+<td>社内プラットフォーム</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="事務・文書">
+<td><span class="tag">事務・文書</span></td>
+<td>Dropbox</td>
+<td>ファイル共有・保管</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="事務・文書">
+<td><span class="tag">事務・文書</span></td>
+<td>Microsoft office</td>
+<td>文書・表計算・メール</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="事務・文書">
+<td><span class="tag">事務・文書</span></td>
+<td>Adobe</td>
+<td>Photoshop等</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="事務・文書">
+<td><span class="tag">事務・文書</span></td>
+<td>ドキュワークス</td>
+<td>文書管理・電子保管</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="事務・文書">
+<td><span class="tag">事務・文書</span></td>
+<td>CheX</td>
+<td>契約書・重要書類</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="会議・支援">
+<td><span class="tag">会議・支援</span></td>
+<td>Teams</td>
+<td>Web会議・連絡</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="会議・支援">
+<td><span class="tag">会議・支援</span></td>
+<td>Zoom</td>
+<td>Web会議</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="会議・支援">
+<td><span class="tag">会議・支援</span></td>
+<td>PDFelement</td>
+<td>PDF編集</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="会議・支援">
+<td><span class="tag">会議・支援</span></td>
+<td>Copilot</td>
+<td>資料作成・業務支援AI</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="端末・連絡">
+<td><span class="tag">端末・連絡</span></td>
+<td>AppleID(iPad)</td>
+<td>業務用iPadのアカウント</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="端末・連絡">
+<td><span class="tag">端末・連絡</span></td>
+<td>社用携帯</td>
+<td>業務用携帯電話</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
+
+<tr data-type="端末・連絡">
+<td><span class="tag">端末・連絡</span></td>
+<td>内線一覧</td>
+<td>社内電話番号一覧</td>
+<td>
+<a class="btn" href="#" target="_blank">
+  🔗 開く
+</a>
+</td>
+<td>
+<a class="btn sub" href="#" target="_blank">
+  資料
+</a>
+</td>
+<td>管理本部</td>
+</tr>
 
 </tbody>
+</table>
 
-  </table>
-
-<footer class="footer">
-  <div class="disclaimer">
-    <strong>【更新について】</strong><br>
-    内容変更・追加がある場合は、各システム担当者より○○までご連絡ください。
-  </div>
-  <div class="updated">
-    最終更新日：2026/01/28
-  </div>
+<footer>
+<div class="disclaimer">
+<strong>【更新について】</strong><br>
+内容の変更・追加がある場合は、建築事務まで「社内システム一覧の件」とご一報ください。
+</div>
+<div class="updated">最終更新日：2026/01/28</div>
 </footer>
-
 
 </div>
 
@@ -435,17 +689,12 @@ function toggleFilter(button) {
   const buttons = document.querySelectorAll(".filter-btn");
 
   if (isAll) {
-    // 「すべて」を押したら他を解除
     buttons.forEach(btn => btn.classList.remove("active"));
     button.classList.add("active");
   } else {
-    // 「すべて」を解除
-    buttons.forEach(btn => {
-      if (btn.dataset.type === "all") btn.classList.remove("active");
-    });
+    document.querySelector('[data-type="all"]').classList.remove("active");
     button.classList.toggle("active");
   }
-
   applyFilter();
 }
 
@@ -461,7 +710,6 @@ function applyFilter() {
     const text = row.innerText.toLowerCase();
 
     const matchType =
-      activeTypes.length === 0 ||
       activeTypes.includes("all") ||
       activeTypes.includes(rowType);
 
@@ -471,7 +719,6 @@ function applyFilter() {
   });
 }
 </script>
-
 
 </body>
 </html>
